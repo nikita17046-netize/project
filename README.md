@@ -3,19 +3,23 @@
 ALME is a next-generation intelligent LMS designed to adapt to student learning paths automatically using AI-driven analytics.
 
 ## 🚀 Vision
+
 To provide a seamless, adaptive, and highly visual learning experience for students while giving administrators deep, actionable insights into student performance and risk levels.
 
 ## 🛠️ Tech Stack
+
 - **Frontend**: React.js (Vite), Recharts (Analytics), Framer Motion (Animations), Lucide (Icons)
 - **Backend**: Node.js, Express.js (JWT, Bcrypt)
 - **Database**: MongoDB (Mongoose)
 - **Styling**: Modern CSS with Glassmorphism and CSS Variables
 
 ## 📂 Structure
+
 - `/frontend`: React application with Login, Register, Student, and Admin panels.
 - `/backend`: Express server with Auth logic and MongoDB schemas.
 
 ## 🟢 Student Panel Features
+
 1. **Smart Overview**: Adaptive skill level, progress, AI next topic, and weak skill alerts.
 2. **Learning Velocity**: Line/Area chart of progress over time.
 3. **Skill Radar**: Proficiency visualization across HTML, CSS, JS, React, Node.
@@ -29,21 +33,26 @@ To provide a seamless, adaptive, and highly visual learning experience for stude
 ## ⚡ How to Run
 
 ### 1. Prerequisites
+
 - Node.js (v18+)
 - MongoDB (Running locally)
 
 ### 2. Installation
+
 Run this in the root folder:
+
 ```bash
 npm run install-all
 ```
 
 ### 3. Initialize Data (Seeding)
+
 ```bash
 npm run seed
 ```
 
 ### 4. Start Application
+
 ```bash
 npm run dev
 ```
