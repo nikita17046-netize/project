@@ -285,7 +285,10 @@ app.get('/api/admin/quizzes', async (req, res) => {
 
 app.put('/api/admin/quizzes/:id', async (req, res) => {
     try {
-        const updatedQuiz = await Quiz.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updateData = { ...req.body };
+        if (updateData.questionCount) updateData.questionCount = parseInt(updateData.questionCount);
+        
+        const updatedQuiz = await Quiz.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json(updatedQuiz);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -295,9 +298,8 @@ app.put('/api/admin/quizzes/:id', async (req, res) => {
 // Create Quiz
 app.post('/api/admin/quizzes', async (req, res) => {
     try {
-        const { title, category, difficulty, points } = req.body;
+        const { title, category, difficulty, points, questionCount } = req.body;
         
-        // Generate default questions if none provided (since Admin UI doesn't support adding questions yet)
         const defaultQuestions = [
             {
                 questionText: `What is a key feature of ${category || 'this topic'}?`,
@@ -317,17 +319,47 @@ app.post('/api/admin/quizzes', async (req, res) => {
                 correctOption: 3,
                 explanation: "It serves multiple purposes effectively."
             },
-             {
+            {
                 questionText: "In which scenario would you use this?",
                 options: ["Real-time apps", "Static sites", "Batch processing", "None"],
                 correctOption: 0,
                 explanation: "It excels in real-time scenarios."
             },
             {
-                questionText: "What is the complexity level?",
-                options: ["O(1)", "O(n)", "O(n^2)", "Varies"],
+                questionText: "What is the complexity level of typical operations?",
+                options: ["O(1)", "O(n)", "O(n^2)", "Variable"],
                 correctOption: 3,
-                explanation: "It depends on the implementation."
+                explanation: "It depends on the specific implementation."
+            },
+            {
+                questionText: "How do you ensure security in this context?",
+                options: ["Input Validation", "Hardcoded credentials", "No encryption", "Public access"],
+                correctOption: 0,
+                explanation: "Input validation is the first line of defense."
+            },
+            {
+                questionText: "What is the primary architectural pattern used?",
+                options: ["MVC", "Monolith", "Spaghetti", "Chaos"],
+                correctOption: 0,
+                explanation: "MVC is standard for organization."
+            },
+            {
+                questionText: "Which tool is commonly used for debugging?",
+                options: ["Debugger", "Print statements only", "Guessing", "Deleting code"],
+                correctOption: 0,
+                explanation: "A proper debugger saves time."
+            },
+            {
+                questionText: "How do you manage state effectively?",
+                options: ["Props and Context", "Global variables", "URL params only", "Random files"],
+                correctOption: 0,
+                explanation: "Modern frameworks provide robust state management."
+            },
+            {
+                questionText: "What is the benefit of modularity?",
+                options: ["Reusability", "Slow deployment", "Code bloat", "Confusion"],
+                correctOption: 0,
+                explanation: "Modularity allows code to be reused easily."
             }
         ];
 
@@ -336,7 +368,8 @@ app.post('/api/admin/quizzes', async (req, res) => {
             category,
             difficulty,
             points,
-            questions: defaultQuestions // Auto-populate
+            questionCount: parseInt(questionCount) || 5, // Persist the limit
+            questions: defaultQuestions 
         });
         await quiz.save();
         res.status(201).json(quiz);

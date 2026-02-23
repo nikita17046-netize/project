@@ -25,7 +25,7 @@ const Sidebar = ({ theme, onLogout }) => {
     <aside className="sidebar">
       <div className="logo-container">
         <div className="logo-orb">
-          <BrainCircuit size={24} color="white" />
+          <BrainCircuit size={24} color="var(--primary)" />
         </div>
         <span className="logo-text">ALME</span>
       </div>
@@ -87,7 +87,7 @@ const Sidebar = ({ theme, onLogout }) => {
 
       {isAuthenticated && (
         <div className="sidebar-footer" style={{ paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
-          <div className="user-card-mini" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: 'rgba(0,0,0,0.1)', borderRadius: '12px' }}>
+          <div className="user-card-mini" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: 'var(--surface-hover)', borderRadius: '12px' }}>
             <div className="mini-avatar" style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold' }}>
               {user?.name?.charAt(0) || 'U'}
             </div>

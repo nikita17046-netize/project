@@ -39,7 +39,8 @@ const QuizSchema = new mongoose.Schema({
     }],
     difficulty: { type: String }, // Removed enum to allow Beginner/Easy flexibility
     points: { type: Number, default: 100 },
-    duration: { type: String, default: '10 min' }
+    duration: { type: String, default: '10 min' },
+    questionCount: { type: Number, default: 5 }
 });
 
 const QuizAttemptSchema = new mongoose.Schema({

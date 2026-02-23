@@ -79,7 +79,7 @@ const Home = () => {
         <div className="hero-visual">
           <div className="visual-orb-container">
             <div className="visual-orb main">
-              <BrainCircuit size={64} color="white" />
+              <BrainCircuit size={64} color="var(--primary)" />
             </div>
             {/* Floating Elements for decoration */}
             <div className="float-card item-1 GLASS">

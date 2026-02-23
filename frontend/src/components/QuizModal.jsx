@@ -19,7 +19,8 @@ const QuizModal = ({ quiz, onClose, userId, onComplete }) => {
     useEffect(() => {
         if (quiz?.questions) {
             const shuffled = [...quiz.questions].sort(() => Math.random() - 0.5);
-            setShuffledQuestions(shuffled);
+            const limit = quiz.questionCount || 5;
+            setShuffledQuestions(shuffled.slice(0, Math.min(limit, shuffled.length)));
         }
     }, [quiz]);
 
@@ -107,201 +108,159 @@ const QuizModal = ({ quiz, onClose, userId, onComplete }) => {
 
     return (
         <div className="modal-overlay">
-            <div className={`quiz-modal card glass animate-slide-up ${finished ? 'wide-modal' : ''}`}>
-                <button className="close-btn-circle" onClick={onClose}><X size={18} /></button>
+            <button className="btn-close-immersive" onClick={onClose}><X size={32} /></button>
 
+            <div className="quiz-modal-immersive animate-fade-in">
                 {!shuffledQuestions || shuffledQuestions.length === 0 ? (
-                    <div className="empty-quiz-state" style={{padding: '2rem', textAlign: 'center'}}>
-                        <AlertCircle size={48} color="var(--accent)" style={{marginBottom: '1rem'}} />
-                        <h3>No Questions Available</h3>
-                        <p className="text-muted">This quiz has no questions yet. Please try another one.</p>
-                        <button className="primary-btn-sm" onClick={onClose} style={{marginTop: '1rem'}}>Close</button>
+                    <div className="empty-quiz-state" style={{padding: '5rem', textAlign: 'center', width: '100%'}}>
+                        <AlertCircle size={64} color="#f43f5e" style={{marginBottom: '1rem'}} />
+                        <h2 style={{fontSize: '2rem'}}>Assessment Unavailable</h2>
+                        <p style={{fontSize: '1.2rem', color: 'var(--quiz-text-muted)', marginTop: '1rem'}}>
+                            This focus area doesn't have active questions yet. Our AI is generating them.
+                        </p>
+                        <button className="btn-exit-premium" onClick={onClose} style={{marginTop: '3rem'}}>Return to Knowledge Base</button>
                     </div>
                 ) : !finished ? (
                     <>
-                        <div className="quiz-header-modern">
-                            <div className="topic-badge">{quiz.relatedSkill?.name || 'Topic Test'}</div>
-                            <h3>{quiz.title}</h3>
-                            <div className="quiz-tracker">
-                                <div className="tracker-text">Question {currentQuestion + 1} of {shuffledQuestions.length}</div>
-                                <div className={`timer-box ${timeLeft < 60 ? 'urgent' : ''}`}>
-                                    <Clock size={16} />
+                        <header className="quiz-header-premium">
+                            <div className="quiz-meta-row">
+                                <div className="quiz-info-group">
+                                    <div className="topic-badge-premium">{quiz.relatedSkill?.name || 'Knowledge Evaluation'}</div>
+                                    <h1>{quiz.title}</h1>
+                                </div>
+                                <div className={`timer-box-premium ${timeLeft < 60 ? 'urgent' : ''}`}>
+                                    <Clock size={24} />
                                     <span>{formatTime(timeLeft)}</span>
                                 </div>
                             </div>
-                            <div className="progress-bar-container">
-                                <div className="progress-bar-fill" style={{ width: `${((currentQuestion + 1) / shuffledQuestions.length) * 100}%` }}></div>
+                            <div className="progress-track-premium">
+                                <div className="progress-bar-premium" style={{ width: `${((currentQuestion + 1) / shuffledQuestions.length) * 100}%` }}></div>
                             </div>
-                        </div>
+                        </header>
 
-                        <div className="question-container quiz-content-scroll">
-                            <h2 className="question-text">{shuffledQuestions[currentQuestion].questionText}</h2>
-                            <div className="options-vertical">
+                        <div className="quiz-content-immersive">
+                            <div className="question-card-premium">
+                                <div className="question-num-pill">MODULE STAGE {currentQuestion + 1} / {shuffledQuestions.length}</div>
+                                <h2 className="question-text-premium">{shuffledQuestions[currentQuestion].questionText}</h2>
+                            </div>
+
+                            <div className="choices-grid-premium">
                                 {shuffledQuestions[currentQuestion].options.map((option, idx) => (
-                                    <button
+                                    <div
                                         key={idx}
-                                        className={`nav-item option-pill ${selectedOption === idx ? 'active' : ''}`}
+                                        className={`choice-card-premium ${selectedOption === idx ? 'selected' : ''}`}
                                         onClick={() => setSelectedOption(idx)}
                                     >
-                                        <span className="option-index">{String.fromCharCode(65 + idx)}</span>
-                                        <span className="option-label">{option}</span>
-                                    </button>
+                                        <div className="choice-index-circle">{String.fromCharCode(65 + idx)}</div>
+                                        <div className="choice-label-premium">{option}</div>
+                                    </div>
                                 ))}
                             </div>
                         </div>
 
-                        <footer className="quiz-footer">
-                            <div className="hint-text"><AlertCircle size={14} /> Select the best answer to proceed</div>
+                        <footer className="quiz-footer-premium">
+                            <div className="hint-chip">
+                                <Brain size={18} />
+                                <span>Verify your logic before proceeding to the next stage</span>
+                            </div>
                             <button
-                                className="primary-btn-sm"
-                                style={{ width: '150px', height: '45px' }}
+                                className="btn-continue-premium"
                                 disabled={selectedOption === null}
                                 onClick={handleNext}
                             >
-                                {currentQuestion + 1 === shuffledQuestions.length ? 'Finalize' : 'Continue'}
+                                {currentQuestion + 1 === shuffledQuestions.length ? 'Finalize Evaluation' : 'Advance Module'} 
+                                <ArrowRight size={20} />
                             </button>
                         </footer>
                     </>
                 ) : (
-                    <div className="result-container animate-fade-in">
-                        <div className="result-header">
-                            <div className="success-icon-wrap">
-                                <CheckCircle size={60} color="#10b981" />
-                            </div>
-                            <div>
-                                <h2>Evaluation Complete</h2>
-                                <p className="text-muted">Here is how you performed</p>
-                            </div>
+                    <div className="results-page-premium">
+                        <div className="results-hero">
+                            <span className="modal-subtitle">Evaluation Success</span>
+                            <h1 className="score-display-premium">
+                                {Math.round((score / (shuffledQuestions.length * 100)) * 100)}%
+                            </h1>
+                            <p style={{fontSize: '1.25rem', color: 'var(--quiz-text-muted)'}}>
+                                Assessment complete. Your cognitive performance has been logged.
+                            </p>
                         </div>
                         
-                        <div className="stats-row">
-                            <div className="stat-box">
-                                <span className="stat-val text-success">{correctCount}</span>
-                                <span className="stat-label">Correct</span>
+                        <div className="eval-summary-cards">
+                            <div className="eval-stat-card">
+                                <span className="val text-green">{correctCount}</span>
+                                <span className="label">Validated Hits</span>
                             </div>
-                             <div className="stat-box">
-                                <span className="stat-val text-danger">{wrongCount}</span>
-                                <span className="stat-label">Wrong</span>
+                             <div className="eval-stat-card">
+                                <span className="val text-red">{wrongCount}</span>
+                                <span className="label">Critical Misses</span>
                             </div>
-                            <div className="stat-box">
-                                <div className="score-ring-sm">
-                                    <div className="score-val">{(score / (shuffledQuestions.length * 100)) * 100}%</div>
-                                </div>
-                                <span className="stat-label">Accuracy</span>
+                            <div className="eval-stat-card">
+                                <span className="val" style={{color: 'var(--quiz-accent)'}}>{formatTime(300 - timeLeft)}</span>
+                                <span className="label">Processing Time</span>
                             </div>
                         </div>
 
-                        <div className="ai-feedback-modern">
-                            <div className="ai-head">
-                                <Brain size={20} />
-                                <span>AI Logic Feedback</span>
+                        <div className="ai-briefing-pro">
+                            <div className="ai-head-line">
+                                <Brain size={24} />
+                                <span>Neural Analysis Briefing</span>
                             </div>
                             <p>{aiFeedback}</p>
                         </div>
                         
-                        {/* Review Section */}
-                        {wrongCount > 0 && (
-                            <div className="review-section">
-                                <h3 className="review-title">Review Incorrect Answers</h3>
-                                <div className="review-list">
-                                    {userAnswers.filter(a => !a.isCorrect).map((ans, idx) => (
-                                        <div key={idx} className="review-card">
-                                            <p className="review-question"><strong>Q:</strong> {ans.questionText}</p>
-                                            
-                                            <div className="review-stack">
-                                                <div className="correct-choice text-success">
-                                                    <span className="label">Correct Answer:</span>
-                                                    <span>{ans.options[ans.correctOption]}</span>
-                                                </div>
-                                                <div className="user-choice text-danger">
-                                                    <span className="label">Your Answer:</span>
-                                                    <span>{ans.options[ans.selectedOption]}</span>
-                                                </div>
-                                            </div>
-
+                        <div className="review-section">
+                            <h3 className="review-header-title">
+                                <AlertCircle size={22} /> Cognitive Performance Review
+                            </h3>
+                            <div className="review-list-pro">
+                                {userAnswers.map((ans, idx) => (
+                                    <div key={idx} className={`review-item-pro ${ans.isCorrect ? 'validated' : 'adjustment'}`}>
+                                        <div className="review-item-header">
+                                            <span className={`review-type-badge ${ans.isCorrect ? 'bg-green' : 'bg-red'}`}>
+                                                {ans.isCorrect ? 'Validated Concept' : 'Cognitive Adjustment'}
+                                            </span>
+                                            <p className="q-text-pro">{ans.questionText}</p>
                                         </div>
-                                    ))}
-                                </div>
-
-                                {quiz.relatedCourse && (
-                                    <button 
-                                        className="btn-go-course"
-                                        onClick={() => navigate(`/course/${quiz.relatedCourse}`)}
-                                        style={{ marginTop: '2rem' }}
-                                    >
-                                       View Related Course <ArrowRight size={16} />
-                                    </button>
-                                )}
+                                        
+                                        <div className="comparison-grid-pro">
+                                            <div className="ans-col">
+                                                <h4>Correct Logic</h4>
+                                                <p className="correct-text">{ans.options[ans.correctOption]}</p>
+                                            </div>
+                                            <div className="ans-col">
+                                                <h4>Your Input</h4>
+                                                <p className={ans.isCorrect ? 'correct-text' : 'wrong-text'}>
+                                                    {ans.options[ans.selectedOption]}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {ans.explanation && (
+                                            <div className="explanation-box">
+                                                <p>{ans.explanation}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                            {quiz.relatedCourse && (
+                                <button 
+                                    className="btn-go-course"
+                                    onClick={() => navigate(`/course/${quiz.relatedCourse}`)}
+                                    style={{ marginTop: '3rem', marginBottom: '3rem', width: 'fit-content', padding: '15px 30px' }}
+                                >
+                                   Recalibrate via Course Material <ArrowRight size={16} />
+                                </button>
+                            )}
+                        </div>
 
-                        <button className="primary-btn-sm" onClick={onClose} style={{ height: '45px', marginTop: '1rem' }}>Return to Path</button>
-                        
-                         <style jsx>{`
-                            .wide-modal { max-width: 800px !important; }
-                            .result-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-                            .stats-row { display: flex; gap: 2rem; justify-content: center; width: 100%; margin-bottom: 2rem; }
-                            .stat-box { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.03); padding: 1rem 2rem; border-radius: 12px; min-width: 100px; border: 1px solid var(--border); }
-                            .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 0.25rem; }
-                            .text-success { color: #10b981; }
-                            .text-danger { color: #ef4444; }
-                            .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
-                            .score-ring-sm { width: 60px; height: 60px; border-radius: 50%; border: 4px solid var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 0.25rem; }
-                            .score-ring-sm .score-val { font-size: 1rem; }
-                            
-                            .review-section { width: 100%; text-align: left; margin-top: 2rem; padding-bottom: 2rem; }
-                            .review-title { font-size: 1.1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-                            .review-list { display: flex; flex-direction: column; gap: 1rem; }
-                            .review-card { background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1rem; border-radius: 10px; }
-                            .review-question { font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text); }
-                            .review-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem; margin-bottom: 0.5rem; }
-                            .user-choice, .correct-choice { display: flex; flex-direction: column; gap: 0.2rem; }
-                            .label { font-size: 0.75rem; font-weight: 700; opacity: 0.8; }
-                            .review-explanation { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.1); }
-                         `}</style>
+                        <div style={{paddingBottom: '5rem'}}>
+                            <button className="btn-exit-premium" onClick={onClose}>
+                                Securely Exit Assessment
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
-
-            <style jsx>{`
-        .close-btn-circle {
-           position: absolute; top: -15px; right: -15px;
-           width: 40px; height: 40px; border-radius: 50%;
-           background: var(--surface); border: 1px solid var(--border);
-           display: flex; align-items: center; justify-content: center;
-           box-shadow: var(--shadow); cursor: pointer; color: var(--text-muted);
-        }
-        .quiz-header-modern { margin-bottom: 2rem; }
-        .topic-badge { background: rgba(99, 102, 241, 0.1); color: var(--primary); font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; width: fit-content; margin-bottom: 0.75rem; text-transform: uppercase; }
-        .quiz-tracker { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .tracker-text { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .timer-box { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--text); padding: 5px 12px; background: var(--background); border-radius: 10px; border: 1px solid var(--border); }
-        .timer-box.urgent { color: var(--accent); border-color: var(--accent); animation: pulse 1s infinite; }
-        .progress-bar-container { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
-        
-        .question-text { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; line-height: 1.3; }
-        .options-vertical { display: flex; flex-direction: column; gap: 0.75rem; }
-        .option-pill { background: var(--background) !important; color: var(--text) !important; border: 1px solid var(--border) !important; padding: 1rem 1.5rem !important; justify-content: flex-start !important; cursor: pointer !important; transition: all 0.2s !important; }
-        .option-pill:hover { border-color: var(--primary) !important; background: rgba(99, 102, 241, 0.05) !important; }
-        .option-pill.active { border-color: var(--primary) !important; background: var(--primary) !important; color: white !important; }
-        .option-index { font-weight: 800; margin-right: 1.25rem; opacity: 0.5; width: 20px; }
-        .option-pill.active .option-index { opacity: 1; }
-        
-        .quiz-footer { margin-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1.5rem; }
-        .hint-text { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
-        
-        .result-container { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding: 1rem 0; }
-        .score-ring { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--primary); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .score-val { font-size: 1.75rem; font-weight: 800; color: var(--primary); line-height: 1; }
-        .score-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
-        .ai-feedback-modern { background: rgba(99, 102, 241, 0.05); border: 1px solid var(--primary); border-radius: 16px; padding: 1.5rem; width: 100%; text-align: left; }
-        .ai-head { display: flex; align-items: center; gap: 0.75rem; font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; }
-        
-        .animate-slide-up { animation: slideUp 0.4s ease-out; }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-      `}</style>
         </div>
     );
 };

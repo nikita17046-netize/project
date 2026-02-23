@@ -85,7 +85,7 @@ const ProtectedAdminRoute = ({ children }) => {
 };
 
 function App() {
-    const [theme, setTheme] = useState('dark');
+    const [theme, setTheme] = useState('light');
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {

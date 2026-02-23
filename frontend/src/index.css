@@ -1,19 +1,19 @@
 :root {
     --primary: #6366f1;
     --primary-hover: #4f46e5;
-    --secondary: #0ea5e9;
+    --secondary: #9333ea;
     --accent: #f43f5e;
-    --background: #0f172a;
-    --surface: #1e293b;
-    --surface-hover: #2d3a4f;
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border: #334155;
-    --glass: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+    --background: #f5f3ff; /* Soft Lavender Tint */
+    --surface: #ffffff;
+    --surface-hover: #fcfaff;
+    --text: #1e1b4b; /* Deep Indigo */
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --glass: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --radius: 16px;
-    --sidebar-width: 320px;
+    --sidebar-width: 280px;
     --header-height: 80px;
 }
 
@@ -36,16 +36,18 @@
 
 body {
     font-family: 'Outfit', 'Inter', sans-serif;
-    background-color: var(--background);
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #f3e8ff 100%);
     color: var(--text);
     line-height: 1.5;
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
 /* Layout System - Robust & Fixed */
 .app-container {
     display: flex;
     min-height: 100vh;
+    background: transparent;
 }
 
 .sidebar {
@@ -271,58 +273,7 @@ body {
     height: 320px;
 }
 
-/* Auth Views */
-.auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at top left, #1e293b, #0f172a);
-    padding: 2rem;
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-}
-
-.auth-card {
-    width: 100%;
-    max-width: 450px;
-    padding: 3.5rem;
-    border-radius: 28px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    text-align: center;
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.input-group input {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: white;
-    width: 100%;
-    font-size: 1rem;
-}
-
-.auth-btn {
-    width: 100%;
-    padding: 1.1rem;
-    border-radius: 14px;
-    background: var(--primary);
-    color: white;
-    font-weight: 700;
-    margin-top: 1rem;
-}
+/* Legacy Auth styles removed - replaced by immersive components in Login/Register pages */
 
 /* Skill Tree Visuals */
 .skill-tree-visual {

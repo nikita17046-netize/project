@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Menu, X, BrainCircuit, ChevronDown, Rocket, Globe, Book, Users,
-  Zap, Shield, Layout, LogOut, User as UserIcon
+  Zap, Shield, Layout, LogOut, User as UserIcon, LogIn
 } from "lucide-react";
 import "./Navbar.css";
 
@@ -20,7 +20,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
         {/* Logo */}
         <NavLink to="/" className="navbar-logo">
           <div className="logo-orb-sm">
-            <BrainCircuit size={20} color="white" />
+            <BrainCircuit size={20} color="black" />
           </div>
           <span className="logo-text-sm">ALME</span>
         </NavLink>
@@ -40,7 +40,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
             {/* Mega Menu: Solutions */}
             <li className="navbar-item">
                 <span className="nav-links">
-                    Solutions <ChevronDown size={14} />
+                    Solutions <ChevronDown size={14} color="black" />
                 </span>
                 <div className="mega-menu" style={{ width: '900px', gridTemplateColumns: '1fr 1fr 1.2fr' }}>
                     <div className="menu-column">
@@ -91,7 +91,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
             {/* Mega Menu: Resources */}
             <li className="navbar-item">
                 <span className="nav-links">
-                    Resources <ChevronDown size={14} />
+                    Resources <ChevronDown size={14} color="black" />
                 </span>
                  <div className="mega-menu" style={{ width: '300px', gridTemplateColumns: '1fr' }}>
                     <div className="menu-column">
@@ -141,8 +141,9 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
                     </div>
                 ) : (
                     <div className="auth-buttons">
-                        <NavLink to="/login" className="btn-auth-signin">Sign In</NavLink>
-                        <NavLink to="/register" className="btn-auth-signup">Sign Up</NavLink>
+                        <NavLink to="/login" className="btn-auth-signup">
+                            <LogIn size={18} /> Login
+                        </NavLink>
                     </div>
                 )}
             </li>

@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
     Users, CheckCircle, AlertTriangle, Activity, Zap, Database,
-    Plus, Edit2, Trash2, Search, X, Bell, Settings, Filter, Download, Book, MoreHorizontal, Shield
+    Plus, Edit2, Trash2, Search, X, Bell, Settings, Filter, Download, Book, MoreHorizontal, Shield, List, Clock
 } from 'lucide-react';
 
 import './AdminDashboard.css';
@@ -99,18 +99,10 @@ const AdminDashboard = () => {
                 setQuizzes(Array.isArray(quizzesData) ? quizzesData : []);
             } catch (error) {
                 console.error("Error fetching admin data:", error);
-                
-                // Fallback to empty/mock data to prevent crash
-                setStats({
-                    totalStudents: 0,
-                    activeNow: 0,
-                    completionRate: 0,
-                    atRisk: 0,
-                    activeCourses: 0
-                });
-                setCourses([]); 
-                setUsers([]);
-                setQuizzes([]);
+                // Keep existing state instead of clearing if it's already populated
+                if (!stats) {
+                    setStats({ totalStudents: 0, activeNow: 0, completionRate: 0, atRisk: 0, activeCourses: 0 });
+                }
             } finally {
                 setLoading(false);
             }
@@ -509,8 +501,12 @@ const AdminDashboard = () => {
                                     {quizzes.map(quiz => (
                                         <tr key={quiz._id || quiz.id}>
                                             <td><span className="font-medium">{quiz.title}</span></td>
-                                            <td>{quiz.relatedSkill?.name || quiz.category || 'General'}</td>
-                                            <td>{quiz.questions?.length || 0}</td>
+                                            <td>{quiz.category || 'General'}</td>
+                                            <td>
+                                                <div className="limit-chip">
+                                                    <Zap size={14} /> {quiz.questionCount || 5} Questions
+                                                </div>
+                                            </td>
                                             <td>{quiz.completions || 0}</td>
                                             <td>
                                                 <div className="action-buttons">
@@ -529,83 +525,140 @@ const AdminDashboard = () => {
 
             {/* Modal remains similar but styled professionally */}
              {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content animate-slide-up">
-                        <div className="modal-header">
-                            <h3>{modalMode === 'add' ? 'Add New' : 'Edit'} {itemType}</h3>
-                            <button className="btn-close" onClick={() => setIsModalOpen(false)}><X size={20}/></button>
+                <div className="modal-overlay-premium">
+                    <form 
+                        key={`${itemType}-${currentItem?._id || 'new'}-${modalMode}`} 
+                        onSubmit={handleSave} 
+                        className="modal-card-attractive animate-fade-in"
+                        style={{ padding: 0, overflow: 'hidden', border: 'none' }}
+                    >
+                        <div className="modal-banner-accent">
+                            <div className="modal-title-group">
+                                <span className="modal-subtitle">Management Console</span>
+                                <h2>{modalMode === 'add' ? 'Create New' : 'Refine'} {itemType}</h2>
+                            </div>
+                            <button type="button" className="btn-close-glass" onClick={() => setIsModalOpen(false)}>
+                                <X size={24} />
+                            </button>
                         </div>
-                        <form onSubmit={handleSave}>
+                        
+                        <div className="modal-body-custom" style={{ padding: '2.5rem' }}>
+                            <div className="modal-form-grid">
                             {itemType === 'course' && (
                                 <>
-                                    <div className="form-group">
+                                    <div className="form-group-custom">
                                         <label>Course Title</label>
-                                        <input name="title" defaultValue={currentItem?.title} required placeholder="e.g., Advanced React" />
+                                        <div className="input-wrapper-custom">
+                                            <Book size={18} />
+                                            <input name="title" defaultValue={currentItem?.title} required placeholder="e.g., Advanced React" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Instructor</label>
-                                        <input name="instructor" defaultValue={currentItem?.instructor} required placeholder="e.g., Dr. Smith" />
+                                    <div className="form-group-custom">
+                                        <label>Instructor Name</label>
+                                        <div className="input-wrapper-custom">
+                                            <Users size={18} />
+                                            <input name="instructor" defaultValue={currentItem?.instructor} required placeholder="e.g., Dr. Smith" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Status</label>
-                                        <select name="status" defaultValue={currentItem?.status || 'Active'}>
-                                            <option value="Active">Active</option>
-                                            <option value="Draft">Draft</option>
-                                            <option value="Archived">Archived</option>
+                                    <div className="form-group-custom">
+                                        <label>Initial Students</label>
+                                        <div className="input-wrapper-custom">
+                                            <Activity size={18} />
+                                            <input name="students" type="number" defaultValue={currentItem?.students || 0} />
+                                        </div>
+                                    </div>
+                                    <div className="form-group-custom">
+                                        <label>Course Status</label>
+                                        <select name="status" defaultValue={currentItem?.status || 'Active'} className="select-custom">
+                                            <option value="Active">Operational / Active</option>
+                                            <option value="Draft">Design Phase / Draft</option>
+                                            <option value="Archived">Archived / Legacy</option>
                                         </select>
                                     </div>
                                 </>
                             )}
                             {itemType === 'user' && (
                                 <>
-                                    <div className="form-group">
-                                        <label>Full Name</label>
-                                        <input name="name" defaultValue={currentItem?.name} required placeholder="e.g., John Doe" />
+                                    <div className="form-group-custom">
+                                        <label>User Full Identity</label>
+                                        <div className="input-wrapper-custom">
+                                            <Users size={18} />
+                                            <input name="name" defaultValue={currentItem?.name} required placeholder="Full name of the user" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Email Address</label>
-                                        <input name="email" type="email" defaultValue={currentItem?.email} required placeholder="e.g., john@example.com" />
+                                    <div className="form-group-custom">
+                                        <label>Communication Email</label>
+                                        <div className="input-wrapper-custom">
+                                            <Mail size={18} />
+                                            <input name="email" type="email" defaultValue={currentItem?.email} required placeholder="user@platform.com" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Role</label>
-                                        <select name="role" defaultValue={currentItem?.role || 'student'}>
-                                            <option value="student">Student</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="instructor">Instructor</option>
+                                    <div className="form-group-custom">
+                                        <label>Platform Privileges</label>
+                                        <select name="role" defaultValue={currentItem?.role || 'student'} className="select-custom">
+                                            <option value="student">Knowledge Seeker (Student)</option>
+                                            <option value="admin">Platform Guardian (Admin)</option>
+                                            <option value="instructor">Content Curator (Instructor)</option>
                                         </select>
                                     </div>
                                 </>
                             )}
                              {itemType === 'quiz' && (
                                 <>
-                                    <div className="form-group">
-                                        <label>Quiz Title</label>
-                                        <input name="title" defaultValue={currentItem?.title} required />
+                                    <div className="form-group-custom full-width">
+                                        <label>Assessment Title</label>
+                                        <div className="input-wrapper-custom">
+                                            <Zap size={18} />
+                                            <input name="title" defaultValue={currentItem?.title} required placeholder="e.g. Logic Mastery Quiz" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Category / Course</label>
-                                        <input name="category" defaultValue={currentItem?.category || currentItem?.relatedSkill?.name} required placeholder="e.g. React.js" />
+                                    <div className="form-group-custom">
+                                        <label>Domain / Technology</label>
+                                        <div className="input-wrapper-custom">
+                                            <Database size={18} />
+                                            <input name="category" defaultValue={currentItem?.category || currentItem?.relatedSkill?.name} required placeholder="e.g. AI, React, UI Design" />
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Difficulty</label>
-                                        <select name="difficulty" defaultValue={currentItem?.difficulty || 'Beginner'}>
-                                            <option value="Beginner">Beginner</option>
-                                            <option value="Intermediate">Intermediate</option>
-                                            <option value="Advanced">Advanced</option>
+                                    <div className="form-group-custom">
+                                        <label>Cognitive Difficulty</label>
+                                        <select name="difficulty" defaultValue={currentItem?.difficulty || 'Beginner'} className="select-custom">
+                                            <option value="Beginner">Fundamental (Beginner)</option>
+                                            <option value="Intermediate">Competent (Intermediate)</option>
+                                            <option value="Advanced">Master (Advanced)</option>
                                         </select>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Points</label>
-                                        <input name="points" type="number" defaultValue={currentItem?.points || 100} required />
+                                    <div className="form-group-custom">
+                                        <label>Point Allocation</label>
+                                        <div className="input-wrapper-custom">
+                                            <Activity size={18} />
+                                            <input name="points" type="number" defaultValue={currentItem?.points || 100} required />
+                                        </div>
+                                    </div>
+                                     <div className="form-group-custom">
+                                        <label>Question Limit</label>
+                                        <div className="input-wrapper-custom">
+                                            <List size={18} />
+                                            <input name="questionCount" type="number" defaultValue={currentItem?.questionCount || 5} required />
+                                        </div>
+                                    </div>
+                                     <div className="form-group-custom">
+                                        <label>Estimated Duration</label>
+                                        <div className="input-wrapper-custom">
+                                            <Zap size={18} />
+                                            <input name="duration" defaultValue={currentItem?.duration || '15 mins'} placeholder="e.g. 15 mins" />
+                                        </div>
                                     </div>
                                 </>
                             )}
-                            <div className="modal-actions">
-                                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="btn-save">Save Changes</button>
                             </div>
-                        </form>
-                    </div>
+                            <div className="modal-footer-custom" style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                                <button type="button" className="btn-cancel-flat" onClick={() => setIsModalOpen(false)}>Dismiss</button>
+                                <button type="submit" className="btn-save-glow" style={{ margin: 0 }}>
+                                    Confirm Changes <CheckCircle size={18} style={{ marginLeft: '8px' }} />
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             )}
         </div>

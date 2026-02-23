@@ -58,12 +58,12 @@
 /* Video Section */
 .video-player-wrapper {
     aspect-ratio: 16/9;
-    background: black;
+    background: var(--surface);
     border-radius: 24px;
     overflow: hidden;
     margin-bottom: 2.5rem;
     border: 1px solid var(--border);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow);
     position: relative;
 }
 
@@ -95,9 +95,7 @@
     font-size: 3rem;
     line-height: 1.1;
     margin-bottom: 1rem;
-    background: linear-gradient(to right, #fff, #a5b4fc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text);
 }
 .instructor-meta { 
     color: var(--text-muted); 
@@ -111,7 +109,7 @@
 .tabs-container { 
     padding: 2rem; 
     border-radius: 24px; 
-    background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+    background: var(--surface);
     border: 1px solid var(--border);
 }
 .tabs-header { 
@@ -177,10 +175,9 @@
     padding: 2.5rem; 
     border-radius: 24px; 
     position: sticky; top: 2rem; 
-    background: rgba(20, 20, 30, 0.6);
-    backdrop-filter: blur(20px);
+    background: var(--surface);
     border: 1px solid var(--border);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow);
 }
 .price-tag { 
     font-size: 2rem; font-weight: 800; 
